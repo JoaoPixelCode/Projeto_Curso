@@ -1,0 +1,31 @@
+# Virtual environment
+.venv/
+venv/
+env/
+instance/
+
+# Python bytecode
+*.pyc
+__pycache__/
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# IDE specific files
+.idea/
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+rascunhos
+control/marca.py
