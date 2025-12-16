@@ -1,31 +1,24 @@
-# Virtual environment
-.venv/
+# Ambientes e credenciais
+.env
+.env.*
+senhas.txt
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
 venv/
 env/
-instance/
+ENV/
 
-# Python bytecode
-*.pyc
-__pycache__/
+# Banco de dados local
+*.db
+*.sqlite3
 
-# Testing and coverage
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-
-# Build artifacts
-dist/
-build/
-*.egg-info/
-
-# IDE specific files
-.idea/
+# IDEs
 .vscode/
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-rascunhos
-control/marca.py
+.idea/
+*.swp
+*.swo

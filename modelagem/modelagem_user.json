@@ -1,0 +1,25 @@
+{
+  "User": {
+    "id": 1,
+    "nome": "João Silva",
+    "email": "joao@empresa.com",
+    "senha": "hash_da_senha",
+    "data_criacao": "2025-01-15"
+  },
+  "Lead": {
+    "id": 1,
+    "nome": "Maria Santos",
+    "email": "maria@email.com",
+    "telefone": "51999999999",
+    "status": "novo",
+    "score": 100,
+    "user_id": 1,
+    "data_criacao": "2025-01-20"
+  },
+  "Product": {
+    "id": 1,
+    "nome": "Pacote Premium",
+    "preco": 1500.00,
+    "descricao": "Pacote completo"
+  }
+}

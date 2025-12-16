@@ -1,4 +1,1 @@
-flask
-sqlalchemy
-psycopg2
-flask_sqlalchemy
+python-dotenv==1.2.1
