@@ -3,7 +3,8 @@
     "id": 1,
     "nome": "João Silva",
     "email": "joao@empresa.com",
-    "senha": "hash_da_senha",
+    "telefone": "51999999999",
+    "senha": "senha",
     "data_criacao": "2025-01-15"
   },
   "Lead": {
