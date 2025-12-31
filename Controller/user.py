@@ -103,3 +103,34 @@ def reativar_usuario(id):
     else:
         db.session.rollback()
         return f"Nenhum usuário encontrado com id {id}, reativação não efetuada."
+    
+@usuario.route("/atualizar/<id>", methods=["PUT"])
+def atualizar(id):
+    # captura dados (form-data ou query params ?nome=…&email=…)
+    nome = request.form.get("nome") or request.args.get("nome")
+    email = request.form.get("email") or request.args.get("email")
+    telefone = request.form.get("telefone") or request.args.get("telefone")
+    senha = request.form.get("senha") or request.args.get("senha")
+    senha2 = request.form.get("senha2") or request.args.get("senha2")
+
+    valido, erro = validador_usuario.ValidadorEmail(email)
+    valido, erro = validador_usuario.ValidadorSenha(senha, senha2)
+    valido, erro = validador_usuario.ValidadorTelefone(telefone)
+    
+    if not valido:
+        return jsonify({'erro': erro}), 400
+    # SQL
+
+    sql = text("UPDATE users SET nome = :nome,email = :email,telefone = :telefone,senha = :senha WHERE id = :id")
+
+    dados = {"nome": nome,"email": email,"telefone": telefone,"senha": senha,"id": id}
+
+    result = db.session.execute(sql, dados)
+    linhas_afetadas = result.rowcount
+
+    if linhas_afetadas == 1:
+        db.session.commit()
+        return f"Usuário com id {id} atualizado!"
+    else:
+        db.session.rollback()
+        return "Erro ao atualizar o usuário", 400
