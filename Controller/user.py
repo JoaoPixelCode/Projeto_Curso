@@ -2,41 +2,13 @@ from flask import Flask,Blueprint, request, jsonify
 from sqlalchemy import text
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from Banco.database import db
 from Classes.usuarios_class import validador_usuario
 
 app = Flask(__name__)
 usuario= Blueprint('usuario', __name__, url_prefix='/usuario')
-
-@usuario.route("/", methods=["POST"])
-def criar():
-    # dados que vieram (aceita form ou query params)
-    nome = request.form.get("nome") or request.args.get("nome")
-    email = request.form.get("email") or request.args.get("email")
-    telefone = request.form.get("telefone") or request.args.get("telefone")
-    senha = request.form.get("senha") or request.args.get("senha")
-    data_criacao = request.form.get("data_criacao") or request.args.get("data_criacao")
-    ativo = request.form.get("ativo") or request.args.get("ativo")
-    senha2 = request.form.get("senha2") or request.args.get("senha2")
-    matricula = request.form.get("matricula") or request.args.get("matricula")
-
-    valido, erro = validador_usuario.ValidadorEmail(email)
-    valido, erro = validador_usuario.ValidadorSenha(senha, senha2)
-    valido, erro = validador_usuario.ValidadorTelefone(telefone)
-    
-    if not valido:
-        return jsonify({'erro': erro}), 400
-    # SQL
-    ativo=(True)
-    data_criacao = date.today()
-    matricula = validador_usuario.gerarMatricula(matricula)
-    sql = text("INSERT INTO users (nome, email, telefone, senha, data_criacao,ativo, matricula) VALUES (:nome, :email, :telefone, :senha, :data_criacao, :ativo, :matricula)")
-    dados = {"nome": nome, "email": email, "telefone": telefone, "senha": senha, "data_criacao": data_criacao, "ativo": ativo, "matricula": matricula}
-    
-    result = db.session.execute(sql, dados)
-    db.session.commit()  
-    return f"Criado com sucesso {nome}, {email}, {telefone}, {senha}, {data_criacao} e {ativo}, e {senha2}, {matricula}"
 
 @usuario.route("/all")
 def get_ALL(): 
@@ -81,7 +53,7 @@ def desativar_usuario(id):
     
     if linhas_afetadas == 1:
         db.session.commit()
-        return f"Cliente com o {id} desativado"
+        return f"Usuario com o {id} desativado"
     else:
         db.session.rollback()
         return f"Só deus na causa"  
@@ -99,7 +71,7 @@ def reativar_usuario(id):
 
     if linhas_afetadas == 1:
         db.session.commit()
-        return f"Cliente com o id {id} foi reativado com sucesso!"
+        return f"Usuario com o id {id} foi reativado com sucesso!"
     else:
         db.session.rollback()
         return f"Nenhum usuário encontrado com id {id}, reativação não efetuada."
