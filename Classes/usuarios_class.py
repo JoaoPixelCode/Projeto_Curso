@@ -49,12 +49,15 @@ class validador_usuario:
                 return False, f"Senhas nao sao iguais"
            
             return True, None
-    def ValidadorTelefone(telefone):
+    def ValidadorTelefone(telefone, obrigatorio=True):
+        
         if not telefone:
-            return False, f"Por favor insira um telefone para contato"
+            if obrigatorio:
+                return False, f"Por favor insira um telefone para contato"
+            return True,None
         if len(telefone) < 8:
             return False,f"Insira um numero valido"
         if len(telefone) > 10:
-            return False,f"Insiria um numero valido"
+                return False,f"Insiria um numero valido"
         
         return True, None

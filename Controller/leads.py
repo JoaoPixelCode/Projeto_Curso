@@ -8,41 +8,36 @@ from Banco.database import db
 from Classes.usuarios_class import validador_usuario
 
 app = Flask(__name__)
-auth= Blueprint('auth', __name__, url_prefix='/auth/')
+leads= Blueprint('leads', __name__, url_prefix='/lead/')
 
-@auth.route("register", methods=["POST"])
+@leads.route("", methods=["POST"])
 def register():
     nome = request.form.get("nome") or request.args.get("nome")
     email = request.form.get("email") or request.args.get("email")
     telefone = request.form.get("telefone") or request.args.get("telefone")
-    senha = request.form.get("senha") or request.args.get("senha")
+    status = request.form.get("status") or request.args.get("status")
     data_criacao = request.form.get("data_criacao") or request.args.get("data_criacao")
-    ativo = request.form.get("ativo") or request.args.get("ativo")
-    senha2 = request.form.get("senha2") or request.args.get("senha2")
+    score = request.form.get("score") or request.args.get("score")
+    user_id = request.form.get("user_id") or request.args.get("user_id")
+    produto_id = request.form.get("produto_id") or request.args.get("produto_id")
     valido, erro = validador_usuario.ValidadorEmail(email)
-    matricula = 0
-    if not valido:
-        return jsonify({'erro': erro}), 400
-    valido, erro = validador_usuario.ValidadorSenha(senha, senha2)
+    ok, erro = validador_usuario.ValidadorTelefone(telefone, obrigatorio=False)
+
     if not valido:
         return jsonify({'erro': erro}), 400
     valido, erro = validador_usuario.ValidadorTelefone(telefone)
     if not valido:
         return jsonify({'erro': erro}), 400
-    # SQL
-    senha_hash = generate_password_hash(senha)
-    ativo=(True)
+    
     data_criacao = date.today()
-    matricula = validador_usuario.gerarMatricula(matricula)
-    ok, erro = validador_usuario.ValidadorTelefone(telefone, obrigatorio=True)
-    sql = text("INSERT INTO users (nome, email, telefone, senha, data_criacao,ativo, matricula) VALUES (:nome, :email, :telefone, :senha, :data_criacao, :ativo, :matricula)")
-    dados = {"nome": nome, "email": email, "telefone": telefone, "senha": senha_hash, "data_criacao": data_criacao, "ativo": ativo, "matricula": matricula}
+    sql = text("INSERT INTO leads (nome, email, telefone, status, data_criacao,score,user_id,produto_id) VALUES (:nome, :email, :telefone, :status, :data_criacao, :score, :user_id, :produto_id)")
+    dados = {"nome": nome, "email": email, "telefone": telefone, "status": status, "data_criacao": data_criacao, "score": score,"user_id": user_id, "produto_id": produto_id}
     
     result = db.session.execute(sql, dados)
     db.session.commit()  
     return f"Criado com sucesso!"
 
-@auth.route("login", methods=["POST"])
+@leads.route("login", methods=["POST"])
 def login():
     
     email = request.form.get("email") or request.args.get("email")
@@ -51,7 +46,7 @@ def login():
     if not email or not senha:
         return jsonify({'erro': 'Email e senha são obrigatórios'}), 400
     
-    sql = text("SELECT email,senha,ativo,nome FROM users where email=:email")
+    sql = text("SELECT email,senha,ativo,nome FROM leads where email=:email")
     dados = {"email":email}
 
     result =db.session.execute(sql,dados)
@@ -71,4 +66,5 @@ def login():
 # 
 # 
 # #
+
 

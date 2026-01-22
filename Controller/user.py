@@ -18,7 +18,7 @@ def get_ALL():
         result = db.session.execute(sql_query)
         
         relatorio = result.mappings().all()
-        json = [dict(row) for row in relatorio]  # Gambi pq cada linha é um objeto
+        json = [dict(row) for row in relatorio] 
         
         return json
     except Exception as e:
@@ -33,7 +33,6 @@ def get_one(matricula):
 
     try:
         result = db.session.execute(sql_query,dados)
-        # Mapear todas as colunas para a linha
         linha = result.mappings().all()[0]
         print(linha)
         return dict(linha)
@@ -43,7 +42,6 @@ def get_one(matricula):
 @usuario.route("/<id>", methods=["Put"])
 def desativar_usuario(id):
     ativo = False
-
     sql = text("UPDATE users set ativo = :ativo where id = :id")
     dados = {"ativo": ativo, "id": id}
 
@@ -78,7 +76,6 @@ def reativar_usuario(id):
     
 @usuario.route("/atualizar/<id>", methods=["PUT"])
 def atualizar(id):
-    # captura dados (form-data ou query params ?nome=…&email=…)
     nome = request.form.get("nome") or request.args.get("nome")
     email = request.form.get("email") or request.args.get("email")
     telefone = request.form.get("telefone") or request.args.get("telefone")
@@ -92,7 +89,6 @@ def atualizar(id):
     if not valido:
         return jsonify({'erro': erro}), 400
     # SQL
-
     sql = text("UPDATE users SET nome = :nome,email = :email,telefone = :telefone,senha = :senha WHERE id = :id")
 
     dados = {"nome": nome,"email": email,"telefone": telefone,"senha": senha,"id": id}
