@@ -69,3 +69,12 @@ class validador_usuario:
         if not telefone and not email:
             return False, f"Por favor insiri ao menos uma forma de contato"
         return True, None
+    
+    
+    def definicaoScore(email, telefone):
+
+        if not email and not telefone:
+            return 0
+        if not email or not telefone:
+            return 50
+        return 100

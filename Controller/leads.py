@@ -17,7 +17,6 @@ def register():
     telefone = request.form.get("telefone") or request.args.get("telefone")
     status = request.form.get("status") or request.args.get("status")
     data_criacao = request.form.get("data_criacao") or request.args.get("data_criacao")
-    score = request.form.get("score") or request.args.get("score")
     user_id = request.form.get("user_id") or request.args.get("user_id")
     produto_id = request.form.get("produto_id") or request.args.get("produto_id")
 
@@ -31,6 +30,8 @@ def register():
     valido, erro = validador_usuario.verificarContato(telefone,email)
     if not valido:
         return jsonify({'erro': erro}), 400
+    
+    score = validador_usuario.definicaoScore(email,telefone)
     
     data_criacao = date.today()
     sql = text("INSERT INTO leads (nome, email, telefone, status, data_criacao,score,user_id,produto_id) VALUES (:nome, :email, :telefone, :status, :data_criacao, :score, :user_id, :produto_id)")
