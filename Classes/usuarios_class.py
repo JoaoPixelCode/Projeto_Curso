@@ -7,10 +7,12 @@ import random
 class validador_usuario:
     @staticmethod
     #Talvez eu deva tirar esse Validador, pos o banca já impede que sejam inseridos email vazios e invalidos
-    def ValidadorEmail(email):
+    def ValidadorEmail(email, obrigatorio =True):
         padrao = r'^[\w\.-]+@[\w\.-]+\.[\w]{2,}$'
         if not email:
-            return False, f"Por favor insira o email"
+            if obrigatorio:
+                return False, f"Por favor insira um telefone para contato"
+            return True,None
         if '@' not in email:
             return False, f"Por favor insira um email valido"
         if not re.match(padrao, email):
@@ -57,7 +59,13 @@ class validador_usuario:
             return True,None
         if len(telefone) < 8:
             return False,f"Insira um numero valido"
-        if len(telefone) > 10:
+        if len(telefone) > 11:
                 return False,f"Insiria um numero valido"
         
+        return True, None
+    
+    def verificarContato(telefone, email):
+        
+        if not telefone and not email:
+            return False, f"Por favor insiri ao menos uma forma de contato"
         return True, None

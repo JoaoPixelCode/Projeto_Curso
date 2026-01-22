@@ -20,12 +20,15 @@ def register():
     score = request.form.get("score") or request.args.get("score")
     user_id = request.form.get("user_id") or request.args.get("user_id")
     produto_id = request.form.get("produto_id") or request.args.get("produto_id")
-    valido, erro = validador_usuario.ValidadorEmail(email)
-    ok, erro = validador_usuario.ValidadorTelefone(telefone, obrigatorio=False)
 
+    valido, erro = validador_usuario.ValidadorEmail(email, obrigatorio=False)
     if not valido:
         return jsonify({'erro': erro}), 400
-    valido, erro = validador_usuario.ValidadorTelefone(telefone)
+    valido, erro = validador_usuario.ValidadorTelefone(telefone, obrigatorio=False)
+    if not valido:
+        return jsonify({'erro': erro}), 400
+    
+    valido, erro = validador_usuario.verificarContato(telefone,email)
     if not valido:
         return jsonify({'erro': erro}), 400
     
