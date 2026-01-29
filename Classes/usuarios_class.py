@@ -78,3 +78,8 @@ class validador_usuario:
         if not email or not telefone:
             return 50
         return 100
+    
+    def verificarNome(nome):
+        if not nome:
+            return False, f"Por favor insiria o nome do usuario"
+        return True,None

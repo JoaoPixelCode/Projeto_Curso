@@ -31,6 +31,10 @@ def register():
     if not valido:
         return jsonify({'erro': erro}), 400
     
+    valido, erro = validador_usuario.verificarNome(nome)
+    if not valido:
+        return jsonify({'erro': erro}), 400
+    
     score = validador_usuario.definicaoScore(email,telefone)
     
     data_criacao = date.today()
@@ -66,9 +70,83 @@ def login():
     if check_password_hash(users.senha, senha):
         return f"Login Realizado com suesso! Seja bem vindo {users.nome}"
 
-#Dá para melhorar as coisas do mês 1, quando começar o mês dar uma olhda de novo no codigo principalmente no JWT
-# 
-# 
-# #
+@leads.route("/all")
+def get_ALL(): 
+    sql_query = text("SELECT * FROM leads")
+    try:
+        # result sem dados
+        result = db.session.execute(sql_query)
+        
+        relatorio = result.mappings().all()
+        json = [dict(row) for row in relatorio] 
+        
+        return json
+    except Exception as e:
+        return str(e)
+    
+    
+@leads.route("/<id>", methods=["Put"])
+def desativar_usuario(id):
+    ativo = False
+    sql = text("UPDATE leads set ativo = :ativo where id = :id")
+    dados = {"ativo": ativo, "id": id}
+
+    result = db.session.execute(sql, dados)
+    
+    linhas_afetadas = result.rowcount
+    
+    if linhas_afetadas == 1:
+        db.session.commit()
+        return f"Lead com o {id} desativado"
+    else:
+        db.session.rollback()
+        return f"Só deus na causa"  
+    
+@leads.route("/reativar/<id>", methods=["PUT"])
+def reativar_usuario(id):
+    ativo = True
+
+    sql = text("UPDATE leads SET ativo = :ativo WHERE id = :id")
+    dados = {"ativo": ativo, "id": id}
+
+    result = db.session.execute(sql, dados)
+
+    linhas_afetadas = result.rowcount
+
+    if linhas_afetadas == 1:
+        db.session.commit()
+        return f"Lead com o id {id} foi reativado com sucesso!"
+    else:
+        db.session.rollback()
+        return f"Nenhum usuário encontrado com id {id}, reativação não efetuada."
+    
+@leads.route("/atualizar/<id>", methods=["PUT"])
+def atualizar(id):
+    nome = request.form.get("nome") or request.args.get("nome")
+    email = request.form.get("email") or request.args.get("email")
+    telefone = request.form.get("telefone") or request.args.get("telefone")
+    
+
+    valido, erro = validador_usuario.ValidadorEmail(email)
+    valido, erro = validador_usuario.ValidadorTelefone(telefone)
+    
+    if not valido:
+        return jsonify({'erro': erro}), 400
+    # SQL
+    score = validador_usuario.definicaoScore(email,telefone)
+    sql = text("UPDATE leads SET nome = :nome,email = :email,telefone = :telefone, score = :score WHERE id = :id")
+
+    dados = {"nome": nome,"email": email,"telefone": telefone,"id": id, "score": score}
+
+    result = db.session.execute(sql, dados)
+    linhas_afetadas = result.rowcount
+
+    if linhas_afetadas == 1:
+        db.session.commit()
+        return f"Lead com id {id} atualizado!"
+    else:
+        db.session.rollback()
+        return "Erro ao atualizar o usuário", 400
+
 
 
