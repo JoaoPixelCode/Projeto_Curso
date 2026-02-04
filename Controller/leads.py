@@ -3,6 +3,7 @@ from sqlalchemy import text
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from Banco.database import db
 from Classes.usuarios_class import validador_usuario
@@ -11,13 +12,12 @@ app = Flask(__name__)
 leads= Blueprint('leads', __name__, url_prefix='/lead/')
 
 @leads.route("", methods=["POST"])
+@jwt_required()
 def register():
     nome = request.form.get("nome") or request.args.get("nome")
     email = request.form.get("email") or request.args.get("email")
     telefone = request.form.get("telefone") or request.args.get("telefone")
-    status = request.form.get("status") or request.args.get("status")
     data_criacao = request.form.get("data_criacao") or request.args.get("data_criacao")
-    user_id = request.form.get("user_id") or request.args.get("user_id")
     produto_id = request.form.get("produto_id") or request.args.get("produto_id")
 
     valido, erro = validador_usuario.ValidadorEmail(email, obrigatorio=False)
@@ -36,7 +36,8 @@ def register():
         return jsonify({'erro': erro}), 400
     
     score = validador_usuario.definicaoScore(email,telefone)
-    
+    user_id = get_jwt_identity()
+    status= True
     data_criacao = date.today()
     sql = text("INSERT INTO leads (nome, email, telefone, status, data_criacao,score,user_id,produto_id) VALUES (:nome, :email, :telefone, :status, :data_criacao, :score, :user_id, :produto_id)")
     dados = {"nome": nome, "email": email, "telefone": telefone, "status": status, "data_criacao": data_criacao, "score": score,"user_id": user_id, "produto_id": produto_id}

@@ -1,4 +1,6 @@
 from flask import Flask
+from flask_jwt_extended import JWTManager
+
 from Banco.database import init_db
 from Controller.auth import auth
 from Controller.leads import leads
@@ -6,6 +8,10 @@ from Controller.dashboard import dashboard
 
 
 app = Flask(__name__)
+
+app.config["JWT_SECRET_KEY"] = "minha_chave_super_secreta"
+
+jwt = JWTManager(app)
 
 init_db(app)
 

@@ -3,6 +3,9 @@ from sqlalchemy import text
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
 
 from Banco.database import db
 from Classes.usuarios_class import validador_usuario
@@ -51,24 +54,39 @@ def login():
     if not email or not senha:
         return jsonify({'erro': 'Email e senha são obrigatórios'}), 400
     
-    sql = text("SELECT email,senha,ativo,nome FROM users where email=:email")
+    sql = text("SELECT id,email,senha,ativo,nome FROM users WHERE email=:email")
     dados = {"email":email}
 
-    result =db.session.execute(sql,dados)
-    db.session.commit()
+    result = db.session.execute(sql, dados)
+    user = result.fetchone()
 
-    users = result.fetchone()
-
-    if not users:
-        return f"Nada encontrado"
+    if not user:
+        return jsonify({"erro":"Usuário não encontrado"}), 404
     
-    if not users.ativo:
-        return f"Usuario desativado"
-    if check_password_hash(users.senha, senha):
-        return f"Login Realizado com suesso! Seja bem vindo {users.nome}"
+    if not user.ativo:
+        return jsonify({"erro":"Usuário desativado"}), 403
+
+    if check_password_hash(user.senha, senha):
+
+        token = create_access_token(
+        identity=str(user.id),
+        additional_claims={
+            "email": user.email,
+            "nome": user.nome
+        }
+    )
+
+    return jsonify({
+        "msg": "Login realizado com sucesso",
+        "token": token
+    })
+
+    return jsonify({"erro":"Senha incorreta"}), 401
+
 
 
 @auth.route("/all")
+@jwt_required()
 def get_ALL(): 
     sql_query = text("SELECT * FROM users")
     try:
@@ -84,18 +102,21 @@ def get_ALL():
     
 
 
-@auth.route("/<matricula>", methods=["POST"]) 
+@auth.route("/matricula/<matricula>", methods=["GET"]) 
 def get_one(matricula): 
-    sql_query = text("SELECT * FROM users where matricula = :matricula ")
+
+    sql_query = text("SELECT * FROM users WHERE matricula = :matricula")
     dados = {"matricula": matricula}
 
-    try:
-        result = db.session.execute(sql_query,dados)
-        linha = result.mappings().all()[0]
-        print(linha)
-        return dict(linha)
-    except Exception as e:
-        return str(e)
+    result = db.session.execute(sql_query, dados)
+
+    linha = result.mappings().first()
+
+    if not linha:
+        return jsonify({"erro": "Usuário não encontrado"}), 404
+
+    return dict(linha)
+
     
 @auth.route("/<id>", methods=["Put"])
 def desativar_usuario(id):

@@ -92,8 +92,9 @@ def quantidade_cadastros_email():
         "total_leads": total
     })
 
-dashboard.route("/quantidade_cadastros_telefone", methods=["GET"])
-def quantidade_cadastros_telefone():
+
+dashboard.route("/telefones", methods=["GET"])
+def telefone():
     total = contar_leads(
         "telefone is not NULL AND telefone != ''",None
     )
