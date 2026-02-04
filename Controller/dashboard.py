@@ -92,9 +92,8 @@ def quantidade_cadastros_email():
         "total_leads": total
     })
 
-
-dashboard.route("/telefones", methods=["GET"])
-def telefone():
+@dashboard.route("/quantidade_cadastros_telefones", methods=["GET"])
+def quantidade_cadastros_telefones():
     total = contar_leads(
         "telefone is not NULL AND telefone != ''",None
     )
@@ -102,3 +101,52 @@ def telefone():
     return jsonify({
         "total_leads": total
     })
+
+@dashboard.route("/quantidade_leads_usuario", methods=["GET"])
+def quantidade_leads_usuario():
+
+    sql = text("""
+        SELECT u.nome AS nome_usuario, COUNT(l.id) AS total_leads
+        FROM leads l
+        JOIN users u ON u.id = l.user_id
+        GROUP BY u.nome
+    """)
+
+    result = db.session.execute(sql).fetchall()
+
+    dados = []
+
+    for row in result:
+        dados.append({
+            "nome_usuario": row.nome_usuario,
+            "total_leads": row.total_leads
+        })
+
+    return jsonify(dados)
+
+
+@dashboard.route("/quantidade_leads_full_usuario", methods=["GET"])
+def quantidade_leads_full_usuario():
+
+    sql = text("""
+        SELECT 
+            u.nome AS nome_usuario,
+            COUNT(l.id) AS total_leads
+        FROM leads l
+        JOIN users u ON u.id = l.user_id
+        WHERE l.telefone IS NOT NULL 
+          AND l.telefone != '' AND l.email IS NOT NULL AND l.email != ''
+        GROUP BY u.nome
+    """)
+
+    result = db.session.execute(sql).fetchall()
+
+    dados = []
+
+    for row in result:
+        dados.append({
+            "nome_usuario": row.nome_usuario,
+            "total_leads": row.total_leads
+        })
+
+    return jsonify(dados)
