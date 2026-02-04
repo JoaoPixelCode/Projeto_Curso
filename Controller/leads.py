@@ -45,31 +45,6 @@ def register():
     db.session.commit()  
     return f"Criado com sucesso!"
 
-@leads.route("login", methods=["POST"])
-def login():
-    
-    email = request.form.get("email") or request.args.get("email")
-    senha = request.form.get("senha") or request.args.get("senha")
-
-    if not email or not senha:
-        return jsonify({'erro': 'Email e senha são obrigatórios'}), 400
-    
-    sql = text("SELECT email,senha,ativo,nome FROM leads where email=:email")
-    dados = {"email":email}
-
-    result =db.session.execute(sql,dados)
-    db.session.commit()
-
-    users = result.fetchone()
-
-    if not users:
-        return f"Nada encontrado"
-    
-    if not users.ativo:
-        return f"Usuario desativado"
-    if check_password_hash(users.senha, senha):
-        return f"Login Realizado com suesso! Seja bem vindo {users.nome}"
-
 @leads.route("/all")
 def get_ALL(): 
     sql_query = text("SELECT * FROM leads")
@@ -87,9 +62,9 @@ def get_ALL():
     
 @leads.route("/<id>", methods=["Put"])
 def desativar_usuario(id):
-    ativo = False
-    sql = text("UPDATE leads set ativo = :ativo where id = :id")
-    dados = {"ativo": ativo, "id": id}
+    status = False
+    sql = text("UPDATE leads set status = :status where id = :id")
+    dados = {"status": status, "id": id}
 
     result = db.session.execute(sql, dados)
     
@@ -104,10 +79,10 @@ def desativar_usuario(id):
     
 @leads.route("/reativar/<id>", methods=["PUT"])
 def reativar_usuario(id):
-    ativo = True
+    status = True
 
-    sql = text("UPDATE leads SET ativo = :ativo WHERE id = :id")
-    dados = {"ativo": ativo, "id": id}
+    sql = text("UPDATE leads SET status = :status WHERE id = :id")
+    dados = {"status": status, "id": id}
 
     result = db.session.execute(sql, dados)
 
