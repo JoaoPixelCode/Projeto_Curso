@@ -8,6 +8,7 @@ from Controller.dashboard import dashboard
 
 
 app = Flask(__name__)
+app.json.ensure_ascii = False
 
 app.config["JWT_SECRET_KEY"] = "minha_chave_super_secreta"
 
