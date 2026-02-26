@@ -261,3 +261,34 @@ def media_score_max():
 
     return jsonify(dados)
 
+
+@dashboard.route("/metrics", methods=["GET"])
+def metrics():
+    total = contar_leads()
+    ativos = contar_leads("status = :status", {"status": True})
+    desativados = contar_leads("status = :status", {"status": False})
+    score_max = contar_leads("score = :score", {"score": 100})
+    score_min = contar_leads("score = :score", {"score": 50})
+
+    sql_vendas = text("""
+        SELECT COALESCE(SUM(p.preco), 0) AS total_vendas
+        FROM leads l
+        JOIN produtos p ON p.id = l.produto_id
+        WHERE l.status = true
+    """)
+    total_vendas = db.session.execute(sql_vendas).fetchone().total_vendas
+
+    return jsonify({
+        "leads": {
+            "total": total,
+            "ativos": ativos,
+            "desativados": desativados
+        },
+        "score": {
+            "score_100": score_max,
+            "score_50": score_min
+        },
+        "vendas": {
+            "total_simulado": float(total_vendas)
+        }
+    })

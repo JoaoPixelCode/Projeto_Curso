@@ -19,6 +19,8 @@ def register():
     email = request.form.get("email") or request.args.get("email")
     telefone = request.form.get("telefone") or request.args.get("telefone")
     senha = request.form.get("senha") or request.args.get("senha")
+    data_criacao = request.form.get("data_criacao") or request.args.get("data_criacao")
+    ativo = request.form.get("ativo") or request.args.get("ativo")
     senha2 = request.form.get("senha2") or request.args.get("senha2")
     valido, erro = validador_usuario.ValidadorEmail(email)
     matricula = 0
@@ -79,6 +81,8 @@ def login():
         "msg": "Login realizado com sucesso",
         "token": token
     })
+
+
 
 @auth.route("/all")
 @jwt_required()
@@ -178,7 +182,3 @@ def atualizar(id):
         return "Erro ao atualizar o usuário", 400
 
 #Dá para melhorar as coisas do mês 1, quando começar o mês dar uma olhda de novo no codigo principalmente no JWT
-# 
-# 
-# #
-
