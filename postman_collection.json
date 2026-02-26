@@ -1,0 +1,357 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+		"name": "API Gestão de Leads",
+		"description": "Collection completa da API de Gestão de Leads e Inteligência de Vendas",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Registrar Usuário",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{"key": "nome", "value": "João Silva", "type": "text"},
+								{"key": "email", "value": "joao@email.com", "type": "text"},
+								{"key": "telefone", "value": "51999999999", "type": "text"},
+								{"key": "senha", "value": "Senha@123", "type": "text"},
+								{"key": "senha2", "value": "Senha@123", "type": "text"}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "register"]
+						}
+					}
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var json = pm.response.json();",
+									"if (json.token) { pm.collectionVariables.set('token', json.token); }"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{"key": "email", "value": "joao@email.com", "type": "text"},
+								{"key": "senha", "value": "Senha@123", "type": "text"}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Listar Todos os Usuários",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": {
+							"raw": "{{base_url}}/auth/all",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "all"]
+						}
+					}
+				},
+				{
+					"name": "Buscar por Matrícula",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/matricula/2025123",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "matricula", "2025123"]
+						}
+					}
+				},
+				{
+					"name": "Desativar Usuário",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/1",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "1"]
+						}
+					}
+				},
+				{
+					"name": "Reativar Usuário",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/reativar/1",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "reativar", "1"]
+						}
+					}
+				},
+				{
+					"name": "Atualizar Usuário",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{"key": "nome", "value": "João Atualizado", "type": "text"},
+								{"key": "email", "value": "joao_novo@email.com", "type": "text"},
+								{"key": "telefone", "value": "51988888888", "type": "text"},
+								{"key": "senha", "value": "NovaSenha@456", "type": "text"},
+								{"key": "senha2", "value": "NovaSenha@456", "type": "text"}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/atualizar/1",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "atualizar", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Leads",
+			"item": [
+				{
+					"name": "Criar Lead",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{"key": "nome", "value": "Maria Santos", "type": "text"},
+								{"key": "email", "value": "maria@email.com", "type": "text"},
+								{"key": "telefone", "value": "51977777777", "type": "text"},
+								{"key": "produto_id", "value": "1", "type": "text"}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/lead/",
+							"host": ["{{base_url}}"],
+							"path": ["lead", ""]
+						}
+					}
+				},
+				{
+					"name": "Listar Todos os Leads",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/lead/all",
+							"host": ["{{base_url}}"],
+							"path": ["lead", "all"]
+						}
+					}
+				},
+				{
+					"name": "Atualizar Lead",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{"key": "nome", "value": "Maria Atualizada", "type": "text"},
+								{"key": "email", "value": "maria_nova@email.com", "type": "text"},
+								{"key": "telefone", "value": "51966666666", "type": "text"}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/lead/atualizar/1",
+							"host": ["{{base_url}}"],
+							"path": ["lead", "atualizar", "1"]
+						}
+					}
+				},
+				{
+					"name": "Desativar Lead",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/lead/1",
+							"host": ["{{base_url}}"],
+							"path": ["lead", "1"]
+						}
+					}
+				},
+				{
+					"name": "Reativar Lead",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/lead/reativar/1",
+							"host": ["{{base_url}}"],
+							"path": ["lead", "reativar", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Dashboard",
+			"item": [
+				{
+					"name": "Métricas Gerais",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/metrics", "host": ["{{base_url}}"], "path": ["dashboard", "metrics"]}
+					}
+				},
+				{
+					"name": "Total de Leads",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/quantidade_leads", "host": ["{{base_url}}"], "path": ["dashboard", "quantidade_leads"]}
+					}
+				},
+				{
+					"name": "Leads Ativos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/quantidade_leads_ativos", "host": ["{{base_url}}"], "path": ["dashboard", "quantidade_leads_ativos"]}
+					}
+				},
+				{
+					"name": "Leads Desativados",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/quantidade_leads_desativados", "host": ["{{base_url}}"], "path": ["dashboard", "quantidade_leads_desativados"]}
+					}
+				},
+				{
+					"name": "Leads Score 100",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/quantidade_scoreMax", "host": ["{{base_url}}"], "path": ["dashboard", "quantidade_scoreMax"]}
+					}
+				},
+				{
+					"name": "Leads Score 50",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/quantidade_scoreMin", "host": ["{{base_url}}"], "path": ["dashboard", "quantidade_scoreMin"]}
+					}
+				},
+				{
+					"name": "Cadastros com Email",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/quantidade_cadastros_email", "host": ["{{base_url}}"], "path": ["dashboard", "quantidade_cadastros_email"]}
+					}
+				},
+				{
+					"name": "Cadastros com Telefone",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/quantidade_cadastros_telefones", "host": ["{{base_url}}"], "path": ["dashboard", "quantidade_cadastros_telefones"]}
+					}
+				},
+				{
+					"name": "Leads por Usuário",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/quantidade_leads_usuario", "host": ["{{base_url}}"], "path": ["dashboard", "quantidade_leads_usuario"]}
+					}
+				},
+				{
+					"name": "Leads Completos por Usuário",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/quantidade_leads_full_usuario", "host": ["{{base_url}}"], "path": ["dashboard", "quantidade_leads_full_usuario"]}
+					}
+				},
+				{
+					"name": "Leads Criados Hoje",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/criados_do_dia", "host": ["{{base_url}}"], "path": ["dashboard", "criados_do_dia"]}
+					}
+				},
+				{
+					"name": "Leads Últimos 7 Dias",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/criados_em_sete_dias", "host": ["{{base_url}}"], "path": ["dashboard", "criados_em_sete_dias"]}
+					}
+				},
+				{
+					"name": "Crescimento Mensal",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/crescimento_mensal", "host": ["{{base_url}}"], "path": ["dashboard", "crescimento_mensal"]}
+					}
+				},
+				{
+					"name": "Ranking de Vendedores",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/ranking", "host": ["{{base_url}}"], "path": ["dashboard", "ranking"]}
+					}
+				},
+				{
+					"name": "Média Score por Usuário",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/media_score_max", "host": ["{{base_url}}"], "path": ["dashboard", "media_score_max"]}
+					}
+				}
+			]
+		}
+	]
+}
