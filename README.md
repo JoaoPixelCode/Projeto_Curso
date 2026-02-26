@@ -56,7 +56,7 @@ bashpython seeder_produtos.py
 bashpython app.py
 A API estará disponível em: http://localhost:5000
 
-🔑 Autenticação
+Autenticação
 As rotas protegidas exigem um token JWT. Para obtê-lo:
 
 Crie um usuário em POST /auth/register
