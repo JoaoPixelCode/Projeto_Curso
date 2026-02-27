@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint, jsonify
+from flask import Flask, Blueprint, jsonify, request
 from sqlalchemy import text
 from Banco.database import db
 
@@ -264,31 +264,46 @@ def media_score_max():
 
 @dashboard.route("/metrics", methods=["GET"])
 def metrics():
-    total = contar_leads()
-    ativos = contar_leads("status = :status", {"status": True})
-    desativados = contar_leads("status = :status", {"status": False})
-    score_max = contar_leads("score = :score", {"score": 100})
-    score_min = contar_leads("score = :score", {"score": 50})
+    # Pega filtros opcionais da URL
+    # Ex: /dashboard/metrics?tipo=vendas
+    #     /dashboard/metrics?tipo=leads
+    #     /dashboard/metrics?tipo=score
+    #     /dashboard/metrics  ← retorna tudo
+    tipo = request.args.get("tipo")
 
-    sql_vendas = text("""
-        SELECT COALESCE(SUM(p.preco), 0) AS total_vendas
-        FROM leads l
-        JOIN produtos p ON p.id = l.produto_id
-        WHERE l.status = true
-    """)
-    total_vendas = db.session.execute(sql_vendas).fetchone().total_vendas
+    resposta = {}
 
-    return jsonify({
-        "leads": {
+    if not tipo or tipo == "leads":
+        total = contar_leads()
+        ativos = contar_leads("status = :status", {"status": True})
+        desativados = contar_leads("status = :status", {"status": False})
+        resposta["leads"] = {
             "total": total,
             "ativos": ativos,
-            "desativados": desativados
-        },
-        "score": {
-            "score_100": score_max,
-            "score_50": score_min
-        },
-        "vendas": {
-            "total_simulado": float(total_vendas)
+            "desativados": desativados,
+            "taxa_conversao_percent": round((ativos / total * 100), 2) if total > 0 else 0
         }
-    })
+
+    if not tipo or tipo == "score":
+        resposta["score"] = {
+            "score_100": contar_leads("score = :score", {"score": 100}),
+            "score_50": contar_leads("score = :score", {"score": 50})
+        }
+
+    if not tipo or tipo == "vendas":
+        sql_vendas = text("""
+            SELECT COALESCE(SUM(p.preco), 0) AS total_vendas,
+                   COUNT(l.id) AS total_com_produto
+            FROM leads l
+            JOIN produtos p ON p.id = l.produto_id
+            WHERE l.status = true
+        """)
+        row = db.session.execute(sql_vendas).fetchone()
+        total_vendas = float(row.total_vendas)
+        total_com_produto = row.total_com_produto
+        resposta["vendas"] = {
+            "total_simulado": total_vendas,
+            "ticket_medio": round(total_vendas / total_com_produto, 2) if total_com_produto > 0 else 0
+        }
+
+    return jsonify(resposta)
