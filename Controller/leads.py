@@ -47,6 +47,7 @@ def register():
     return f"Criado com sucesso!"
 
 @leads.route("/all")
+@jwt_required()
 def get_ALL(): 
     sql_query = text("SELECT * FROM leads")
     try:
@@ -62,6 +63,7 @@ def get_ALL():
     
     
 @leads.route("/<id>", methods=["Put"])
+@jwt_required()
 def desativar_usuario(id):
     status = False
     sql = text("UPDATE leads set status = :status where id = :id")
@@ -79,6 +81,7 @@ def desativar_usuario(id):
         return f"Só deus na causa"  
     
 @leads.route("/reativar/<id>", methods=["PUT"])
+@jwt_required()
 def reativar_usuario(id):
     status = True
 
@@ -97,6 +100,7 @@ def reativar_usuario(id):
         return f"Nenhum usuário encontrado com id {id}, reativação não efetuada."
     
 @leads.route("/atualizar/<id>", methods=["PUT"])
+@jwt_required()
 def atualizar(id):
     nome = request.form.get("nome") or request.args.get("nome")
     email = request.form.get("email") or request.args.get("email")
@@ -123,6 +127,22 @@ def atualizar(id):
     else:
         db.session.rollback()
         return "Erro ao atualizar o usuário", 400
+    
+@leads.route("/<id>", methods=["DELETE"])
+@jwt_required()
+def deletar_lead(id):
+    sql = text("DELETE FROM leads WHERE id = :id")
+    dados = {"id": id}
+
+    result = db.session.execute(sql, dados)
+    linhas_afetadas = result.rowcount
+
+    if linhas_afetadas == 1:
+        db.session.commit()
+        return jsonify({"msg": f"Lead com id {id} deletado com sucesso!"})
+    else:
+        db.session.rollback()
+        return jsonify({"erro": "Lead não encontrado"}), 404
 
 
 
