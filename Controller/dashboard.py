@@ -307,3 +307,28 @@ def metrics():
         }
 
     return jsonify(resposta)
+
+#------------------------------Produtos------------------------------
+
+@dashboard.route("/produtos/ranking", methods=["GET"])
+def ranking_produtos():
+    sql = text("""
+        SELECT p.nome, COUNT(l.id) AS total_leads, SUM(p.preco) AS receita_simulada
+        FROM leads l
+        JOIN produtos p ON p.id = l.produto_id
+        GROUP BY p.nome
+        ORDER BY total_leads DESC
+    """)
+
+    result = db.session.execute(sql).fetchall()
+
+    dados = []
+    for posicao, row in enumerate(result, start=1):
+        dados.append({
+            "posicao": posicao,
+            "produto": row.nome,
+            "total_leads": row.total_leads,
+            "receita_simulada": float(row.receita_simulada)
+        })
+
+    return jsonify(dados)

@@ -1,27 +1,35 @@
-# Projeto_Curso
-API de Gestão de Leads e Inteligência de Vendas
-API REST desenvolvida em Flask para gerenciar o ciclo de vida de leads, simular uma base de produtos (ERP) e fornecer métricas para um dashboard de vendas.
+# API de Gestão de Leads e Inteligência de Vendas
 
-Como rodar localmente
-Pré-requisitos
+API REST desenvolvida em **Flask** e **PostgreSQL** para gerenciar o ciclo de vida de leads, integrar uma base de produtos e fornecer métricas para um dashboard de vendas.
 
-Python 3.10+
-PostgreSQL instalado e rodando
+🌐 **API em produção:** [https://projeto-curso.onrender.com](https://projeto-curso.onrender.com)
 
-Passo a passo
-1. Clone o repositório
-bashgit clone https://github.com/seu-usuario/Projeto_Curso.git
+---
+
+## Como rodar localmente
+
+**1. Clone o repositório**
+```bash
+git clone https://github.com/seu-usuario/Projeto_Curso.git
 cd Projeto_Curso
-2. Instale as dependências
-bashpip install -r requirements.txt
-3. Configure o banco de dados
-Crie um banco no PostgreSQL:
-sqlCREATE DATABASE projeto_leads;
-Crie um arquivo .env na raiz do projeto:
-envDATABASE_URL=postgresql+psycopg2://postgres:SUA_SENHA@localhost/projeto_leads
-4. Crie as tabelas no banco
-Execute no seu PostgreSQL:
-sqlCREATE TABLE users (
+```
+
+**2. Instale as dependências**
+```bash
+pip install -r requirements.txt
+```
+
+**3. Configure o `.env`**
+```env
+DATABASE_URL=postgresql+psycopg2://postgres:SUA_SENHA@localhost/projeto_leads
+SECRET_KEY=sua-chave-secreta
+```
+
+**4. Crie as tabelas no PostgreSQL**
+```sql
+CREATE DATABASE projeto_leads;
+
+CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
@@ -50,19 +58,58 @@ CREATE TABLE leads (
     user_id INTEGER REFERENCES users(id),
     produto_id INTEGER REFERENCES produtos(id)
 );
-5. Popule os produtos (seeder)
-bashpython seeder_produtos.py
-6. Rode a aplicação
-bashpython app.py
-A API estará disponível em: http://localhost:5000
+```
 
-Autenticação
-As rotas protegidas exigem um token JWT. Para obtê-lo:
+**5. Popule os produtos**
+```bash
+python seeder_prudutos.py
+```
 
-Crie um usuário em POST /auth/register
-Faça login em POST /auth/login
-Use o token no header: Authorization: Bearer SEU_TOKEN
+**6. Rode a aplicação**
+```bash
+python app.py
+```
 
+---
 
-📋 Principais rotas
-MétodoRotaDescriçãoPOST/auth/registerCadastrar usuárioPOST/auth/loginLogin (retorna JWT)GET/lead/allListar todos os leadsPOST/lead/Criar leadPUT/lead/atualizar/<id>Atualizar leadGET/dashboard/metricsMétricas gerais
+## Autenticação
+
+As rotas protegidas exigem token JWT. Para obtê-lo:
+
+1. Crie um usuário em `POST /auth/register`
+2. Faça login em `POST /auth/login`
+3. Use o token no header: `Authorization: Bearer SEU_TOKEN`
+
+---
+
+## Rotas
+
+### Auth
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| POST | `/auth/register` | Cadastrar usuário |
+| POST | `/auth/login` | Login — retorna JWT |
+| GET | `/auth/all` | Listar usuários |
+| PUT | `/auth/atualizar/<id>` | Atualizar usuário |
+| PUT | `/auth/<id>` | Desativar usuário |
+| PUT | `/auth/reativar/<id>` | Reativar usuário |
+
+### Leads
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| POST | `/lead/` | Criar lead |
+| GET | `/lead/all` | Listar leads |
+| PUT | `/lead/atualizar/<id>` | Atualizar lead |
+| PUT | `/lead/<id>` | Desativar lead |
+| PUT | `/lead/reativar/<id>` | Reativar lead |
+| DELETE | `/lead/<id>` | Deletar lead |
+
+### Dashboard
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| GET | `/dashboard/metrics` | Resumo geral (`?tipo=leads`, `?tipo=score`, `?tipo=vendas`) |
+| GET | `/dashboard/ranking` | Top 5 vendedores |
+| GET | `/dashboard/crescimento_mensal` | Leads por mês |
+| GET | `/dashboard/criados_do_dia` | Leads criados hoje |
+| GET | `/dashboard/criados_em_sete_dias` | Leads dos últimos 7 dias |
+| GET | `/dashboard/quantidade_leads_usuario` | Leads por vendedor |
