@@ -104,12 +104,33 @@ As rotas protegidas exigem token JWT. Para obtê-lo:
 | PUT | `/lead/reativar/<id>` | Reativar lead |
 | DELETE | `/lead/<id>` | Deletar lead |
 
-### Dashboard
+### Dashboard — Leads
 | Método | Rota | Descrição |
 |--------|------|-----------|
 | GET | `/dashboard/metrics` | Resumo geral (`?tipo=leads`, `?tipo=score`, `?tipo=vendas`) |
-| GET | `/dashboard/ranking` | Top 5 vendedores |
-| GET | `/dashboard/crescimento_mensal` | Leads por mês |
+| GET | `/dashboard/quantidade_leads` | Total de leads |
+| GET | `/dashboard/quantidade_leads_ativos` | Leads ativos |
+| GET | `/dashboard/quantidade_leads_desativados` | Leads desativados |
+| GET | `/dashboard/quantidade_scoreMax` | Leads com score 100 |
+| GET | `/dashboard/quantidade_scoreMin` | Leads com score 50 |
+| GET | `/dashboard/quantidade_cadastros_email` | Percentual de leads com email |
+| GET | `/dashboard/quantidade_cadastros_telefones` | Percentual de leads com telefone |
 | GET | `/dashboard/criados_do_dia` | Leads criados hoje |
 | GET | `/dashboard/criados_em_sete_dias` | Leads dos últimos 7 dias |
-| GET | `/dashboard/quantidade_leads_usuario` | Leads por vendedor |
+| GET | `/dashboard/crescimento_mensal` | Leads por mês |
+
+### Dashboard — Usuários
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| GET | `/dashboard/ranking` | Top 5 vendedores por volume de leads |
+| GET | `/dashboard/media_score_max` | Percentual de leads score 100 por vendedor |
+| GET | `/dashboard/quantidade_leads_usuario` | Total de leads por vendedor |
+| GET | `/dashboard/quantidade_leads_full_usuario` | Leads completos (email+telefone) por vendedor |
+
+### Dashboard — Produtos
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| GET | `/dashboard/produtos/mais_vendido` | Produto com mais leads associados |
+| GET | `/dashboard/produtos/ranking` | Ranking de produtos por leads e receita |
+| GET | `/dashboard/produtos/sem_leads` | Produtos sem nenhum lead associado |
+| GET | `/dashboard/relatorio` | Relatório cruzado produto x lead x vendedor (`?tipo=produtos`, `?tipo=vendedores`, `?tipo=geral`) |

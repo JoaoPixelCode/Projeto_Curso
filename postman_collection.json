@@ -225,11 +225,23 @@
 							"path": ["lead", "reativar", "1"]
 						}
 					}
+				},
+				{
+					"name": "Deletar Lead",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/lead/1",
+							"host": ["{{base_url}}"],
+							"path": ["lead", "1"]
+						}
+					}
 				}
 			]
 		},
 		{
-			"name": "Dashboard",
+			"name": "Dashboard — Leads",
 			"item": [
 				{
 					"name": "Métricas Gerais",
@@ -237,6 +249,30 @@
 						"method": "GET",
 						"header": [],
 						"url": {"raw": "{{base_url}}/dashboard/metrics", "host": ["{{base_url}}"], "path": ["dashboard", "metrics"]}
+					}
+				},
+				{
+					"name": "Métricas Gerais — Só Leads",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/metrics?tipo=leads", "host": ["{{base_url}}"], "path": ["dashboard", "metrics"], "query": [{"key": "tipo", "value": "leads"}]}
+					}
+				},
+				{
+					"name": "Métricas Gerais — Só Score",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/metrics?tipo=score", "host": ["{{base_url}}"], "path": ["dashboard", "metrics"], "query": [{"key": "tipo", "value": "score"}]}
+					}
+				},
+				{
+					"name": "Métricas Gerais — Só Vendas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/metrics?tipo=vendas", "host": ["{{base_url}}"], "path": ["dashboard", "metrics"], "query": [{"key": "tipo", "value": "vendas"}]}
 					}
 				},
 				{
@@ -296,22 +332,6 @@
 					}
 				},
 				{
-					"name": "Leads por Usuário",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {"raw": "{{base_url}}/dashboard/quantidade_leads_usuario", "host": ["{{base_url}}"], "path": ["dashboard", "quantidade_leads_usuario"]}
-					}
-				},
-				{
-					"name": "Leads Completos por Usuário",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {"raw": "{{base_url}}/dashboard/quantidade_leads_full_usuario", "host": ["{{base_url}}"], "path": ["dashboard", "quantidade_leads_full_usuario"]}
-					}
-				},
-				{
 					"name": "Leads Criados Hoje",
 					"request": {
 						"method": "GET",
@@ -334,7 +354,12 @@
 						"header": [],
 						"url": {"raw": "{{base_url}}/dashboard/crescimento_mensal", "host": ["{{base_url}}"], "path": ["dashboard", "crescimento_mensal"]}
 					}
-				},
+				}
+			]
+		},
+		{
+			"name": "Dashboard — Usuários",
+			"item": [
 				{
 					"name": "Ranking de Vendedores",
 					"request": {
@@ -349,6 +374,83 @@
 						"method": "GET",
 						"header": [],
 						"url": {"raw": "{{base_url}}/dashboard/media_score_max", "host": ["{{base_url}}"], "path": ["dashboard", "media_score_max"]}
+					}
+				},
+				{
+					"name": "Leads por Usuário",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/quantidade_leads_usuario", "host": ["{{base_url}}"], "path": ["dashboard", "quantidade_leads_usuario"]}
+					}
+				},
+				{
+					"name": "Leads Completos por Usuário",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/quantidade_leads_full_usuario", "host": ["{{base_url}}"], "path": ["dashboard", "quantidade_leads_full_usuario"]}
+					}
+				}
+			]
+		},
+		{
+			"name": "Dashboard — Produtos",
+			"item": [
+				{
+					"name": "Produto Mais Associado",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/produtos/mais_vendido", "host": ["{{base_url}}"], "path": ["dashboard", "produtos", "mais_vendido"]}
+					}
+				},
+				{
+					"name": "Ranking de Produtos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/produtos/ranking", "host": ["{{base_url}}"], "path": ["dashboard", "produtos", "ranking"]}
+					}
+				},
+				{
+					"name": "Produtos Sem Leads",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/produtos/sem_leads", "host": ["{{base_url}}"], "path": ["dashboard", "produtos", "sem_leads"]}
+					}
+				},
+				{
+					"name": "Relatório Geral",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/relatorio", "host": ["{{base_url}}"], "path": ["dashboard", "relatorio"]}
+					}
+				},
+				{
+					"name": "Relatório — Só Produtos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/relatorio?tipo=produtos", "host": ["{{base_url}}"], "path": ["dashboard", "relatorio"], "query": [{"key": "tipo", "value": "produtos"}]}
+					}
+				},
+				{
+					"name": "Relatório — Só Vendedores",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/relatorio?tipo=vendedores", "host": ["{{base_url}}"], "path": ["dashboard", "relatorio"], "query": [{"key": "tipo", "value": "vendedores"}]}
+					}
+				},
+				{
+					"name": "Relatório — Visão Geral",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "{{base_url}}/dashboard/relatorio?tipo=geral", "host": ["{{base_url}}"], "path": ["dashboard", "relatorio"], "query": [{"key": "tipo", "value": "geral"}]}
 					}
 				}
 			]
