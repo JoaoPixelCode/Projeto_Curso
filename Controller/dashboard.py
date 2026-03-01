@@ -310,6 +310,25 @@ def metrics():
 
 #------------------------------Produtos------------------------------
 
+@dashboard.route("/produtos/sem_leads", methods=["GET"])
+def produtos_sem_leads():
+    sql = text("""
+        SELECT p.nome, p.preco
+        FROM produtos p
+        LEFT JOIN leads l ON l.produto_id = p.id
+        WHERE l.id IS NULL
+        ORDER BY p.nome
+    """)
+
+    result = db.session.execute(sql).fetchall()
+
+    dados = [{"produto": row.nome, "preco": float(row.preco)} for row in result]
+
+    return jsonify({
+        "total": len(dados),
+        "produtos": dados
+    })
+
 @dashboard.route("/produtos/ranking", methods=["GET"])
 def ranking_produtos():
     sql = text("""
@@ -332,3 +351,97 @@ def ranking_produtos():
         })
 
     return jsonify(dados)
+
+@dashboard.route("/produtos/mais_vendido", methods=["GET"])
+def produto_mais_vendido():
+    sql = text("""
+        SELECT p.nome, COUNT(l.id) AS total_leads
+        FROM leads l
+        JOIN produtos p ON p.id = l.produto_id
+        GROUP BY p.nome
+        ORDER BY total_leads DESC
+        LIMIT 1
+    """)
+
+    result = db.session.execute(sql).fetchone()
+
+    if not result:
+        return jsonify({"msg": "Nenhum produto associado a leads ainda"}), 404
+
+    return jsonify({
+        "produto_mais_vendido": result.nome,
+        "total_leads": result.total_leads
+    })
+
+@dashboard.route("/relatorio", methods=["GET"])
+def relatorio():
+    tipo = request.args.get("tipo")  # ?tipo=produtos, ?tipo=vendedores, ?tipo=geral
+
+    resposta = {}
+
+    if not tipo or tipo == "produtos":
+        sql_produto_leads = text("""
+            SELECT p.nome, COUNT(l.id) AS total_leads
+            FROM leads l
+            JOIN produtos p ON p.id = l.produto_id
+            GROUP BY p.nome
+            ORDER BY total_leads DESC
+            LIMIT 5
+        """)
+        res = db.session.execute(sql_produto_leads).fetchall()
+        resposta["top5_produtos_por_leads"] = [
+            {"produto": row[0], "total_leads": row[1]}
+            for row in res
+        ]
+
+    if not tipo or tipo == "vendedores":
+        sql_produto_usuario = text("""
+            SELECT u.nome AS vendedor, p.nome AS produto, COUNT(l.id) AS total
+            FROM leads l
+            JOIN users u ON u.id = l.user_id
+            JOIN produtos p ON p.id = l.produto_id
+            GROUP BY u.nome, p.nome
+            ORDER BY u.nome, total DESC
+        """)
+        res = db.session.execute(sql_produto_usuario).fetchall()
+
+        favorito_por_vendedor = {}
+        for row in res:
+            if row[0] not in favorito_por_vendedor:
+                favorito_por_vendedor[row[0]] = {
+                    "produto_favorito": row[1],
+                    "total_leads": row[2]
+                }
+
+        resposta["produto_favorito_por_vendedor"] = [
+            {"vendedor": vendedor, **dados}
+            for vendedor, dados in favorito_por_vendedor.items()
+        ]
+
+    if not tipo or tipo == "geral":
+        sql_combinado = text("""
+            SELECT 
+                p.nome,
+                COUNT(l.id) AS total_leads,
+                COUNT(DISTINCT l.user_id) AS total_vendedores,
+                ROUND(AVG(l.score), 2) AS media_score,
+                SUM(p.preco) AS receita_simulada
+            FROM leads l
+            JOIN produtos p ON p.id = l.produto_id
+            GROUP BY p.nome
+            ORDER BY total_leads DESC
+            LIMIT 5
+        """)
+        res = db.session.execute(sql_combinado).fetchall()
+        resposta["visao_geral_produtos"] = [
+            {
+                "produto": row[0],
+                "total_leads": row[1],
+                "vendedores_envolvidos": row[2],
+                "media_score_leads": float(row[3]),
+                "receita_simulada": float(row[4])
+            }
+            for row in res
+        ]
+
+    return jsonify(resposta)
