@@ -2,7 +2,7 @@
 
 API REST desenvolvida em **Flask** e **PostgreSQL** para gerenciar o ciclo de vida de leads, integrar uma base de produtos e fornecer métricas para um dashboard de vendas.
 
-🌐 **API em produção:** [https://projeto-curso.onrender.com](https://projeto-curso.onrender.com)
+**API em produção:** [https://projeto-curso.onrender.com](https://projeto-curso.onrender.com)
 
 ---
 
