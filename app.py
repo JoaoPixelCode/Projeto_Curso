@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
-
+from datetime import timedelta 
 from Banco.database import init_db
 from Controller.auth import auth
 from Controller.leads import leads
@@ -11,6 +11,7 @@ app = Flask(__name__)
 app.json.ensure_ascii = False
 
 app.config["JWT_SECRET_KEY"] = "minha_chave_super_secreta"
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=24) 
 
 jwt = JWTManager(app)
 
